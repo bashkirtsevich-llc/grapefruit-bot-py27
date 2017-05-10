@@ -21,10 +21,14 @@ def search_torrents(query="latest", page=0):
 
     server_result = urllib2.urlopen(url).read()
 
-    results = json.loads(server_result)["result"]
+    api_response = json.loads(server_result)
+
+    results = api_response["result"]
+    results_count = api_response["count"]
+
     if results:
-        if len(results) > 10:
-            paginator = " (page {0}/{1})".format(page + 1, len(results) / 10)
+        if results_count > 10:
+            paginator = " (page {0}/{1})".format(page + 1, results_count / 10)
         else:
             paginator = ""
 
@@ -37,7 +41,7 @@ def search_torrents(query="latest", page=0):
                 query=query,
                 paginator=paginator
             )
-        ), len(results)
+        ), results_count
     else:
         return ("Your search - *{0}* - did not match any documents.\r\n\r\n"
                 "Suggestions:\r\n"
