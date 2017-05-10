@@ -36,7 +36,7 @@ def search_torrents(query="latest", page=0):
             lambda r, e: r + "\xE2\x96\xAB `{name}`\r\n/{info_hash}\r\n\r\n".format(
                 name=e["name"].encode('utf-8').strip(),
                 info_hash=e["info_hash"]),
-            results[page * 10: page * 10 + 10],
+            results,
             "Search *results* by keywords \"_{query}_\"{paginator}:\r\n\r\n".format(
                 query=query,
                 paginator=paginator
