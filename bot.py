@@ -69,12 +69,12 @@ def get_torrent_details(info_hash, page=0):
                             ""),
                 size=sizeof_fmt(e["length"])),
             result["files"][page * 10: page * 10 + 10],
-            ("*Torrent details*\r\n\r\n"
-             "*Name*: `{torrent_name}`\r\n\r\n"
-             "*Size*: `{torrent_size}`\r\n\r\n"
-             "*Hash*: `{info_hash}`\r\n\r\n"
-             "*URL*: `magnet:?xt=urn:btih:{info_hash}&dn={torrent_name}`\r\n\r\n"
-             "*Files*{paginator}:\r\n").format(
+            ("\xE2\x96\xAB *Torrent details*\r\n\r\n"
+             "\xE2\x96\xAB *Name*: `{torrent_name}`\r\n\r\n"
+             "\xE2\x96\xAB *Size*: `{torrent_size}`\r\n\r\n"
+             "\xE2\x96\xAB *Hash*: `{info_hash}`\r\n\r\n"
+             "\xE2\x96\xAB *URL*: `magnet:?xt=urn:btih:{info_hash}&dn={torrent_name}`\r\n\r\n"
+             "\xE2\x96\xAB *Files*{paginator}:\r\n").format(
                 info_hash=result["info_hash"],
                 torrent_name=result["name"].encode('utf-8').strip(),
                 torrent_size=get_files_size(result["files"]),
@@ -135,7 +135,7 @@ def start_bot(bot_token):
                     }).replace(" ", "")
 
                     keyboard = InlineKeyboardMarkup()
-                    keyboard.add(InlineKeyboardButton(text="Next 10 files",
+                    keyboard.add(InlineKeyboardButton(text="Next page \xE2\x9E\xA1",
                                                       callback_data=btn_next_data))
                 else:
                     keyboard = None
@@ -161,7 +161,7 @@ def start_bot(bot_token):
                         })
 
                         keyboard = InlineKeyboardMarkup()
-                        keyboard.add(InlineKeyboardButton(text="Next 10 results",
+                        keyboard.add(InlineKeyboardButton(text="Next page \xE2\x9E\xA1",
                                                           callback_data=btn_next_data))
                     else:
                         keyboard = None
@@ -192,12 +192,16 @@ def start_bot(bot_token):
 
                         if page > 0:
                             buttons.append(InlineKeyboardButton(
-                                text="Previous 10 results",
+                                text="\xE2\xAC\x85 Prev page",
                                 callback_data=json.dumps({"m": "s", "a": arg, "p": page - 1})))
+
+                            buttons.append(InlineKeyboardButton(
+                                text="\xE2\x86\xA9 Home",
+                                callback_data=json.dumps({"m": "s", "a": arg, "p": 0})))
 
                         if results_count - page * 10 > 10:
                             buttons.append(InlineKeyboardButton(
-                                text="Next 10 results",
+                                text="Next page \xE2\x9E\xA1",
                                 callback_data=json.dumps({"m": "s", "a": arg, "p": page + 1})))
 
                     elif mode == "d":
@@ -205,13 +209,18 @@ def start_bot(bot_token):
 
                         if page > 0:
                             buttons.append(InlineKeyboardButton(
-                                text="Previous 10 files",
+                                text="\xE2\xAC\x85 Prev page",
                                 callback_data=json.dumps(
                                     {"m": "d", "a": arg, "p": page - 1}).replace(" ", "")))
 
+                            buttons.append(InlineKeyboardButton(
+                                text="\xE2\x86\xA9 Home",
+                                callback_data=json.dumps(
+                                    {"m": "d", "a": arg, "p": 0}).replace(" ", "")))
+
                         if files_count - page * 10 > 10:
                             buttons.append(InlineKeyboardButton(
-                                text="Next 10 files",
+                                text="Next page \xE2\x9E\xA1",
                                 callback_data=json.dumps(
                                     {"m": "d", "a": arg, "p": page + 1}).replace(" ", "")))
 
