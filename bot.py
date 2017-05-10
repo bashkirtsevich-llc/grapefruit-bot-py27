@@ -12,11 +12,12 @@ from utils import str_escape, is_info_hash, get_files_size, sizeof_fmt
 
 def search_torrents(query="latest", page=0):
     if query == "latest":
-        url = "http://localhost:8081/api/latest?limit=100"
+        url = "http://localhost:8081/api/latest?limit=10&offset={0}".format(
+            page * 10)
     else:
-        url = "http://localhost:8081/api/search?{0}".format(
-            urllib.urlencode({"query": query})
-        )
+        url = "http://localhost:8081/api/search?{0}&limit=10&offset={1}".format(
+            urllib.urlencode({"query": query}),
+            page * 10)
 
     server_result = urllib2.urlopen(url).read()
 
