@@ -2,6 +2,7 @@ import json
 import urllib
 import urllib2
 import math
+from __future__ import division
 
 from telebot import TeleBot
 from telebot.types import InlineKeyboardButton
