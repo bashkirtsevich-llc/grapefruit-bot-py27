@@ -1,6 +1,7 @@
 import json
 import urllib
 import urllib2
+import math
 
 from telebot import TeleBot
 from telebot.types import InlineKeyboardButton
@@ -28,7 +29,7 @@ def search_torrents(query="latest", page=0):
 
     if results:
         if results_count > 10:
-            paginator = " (page {0}/{1})".format(page + 1, results_count / 10)
+            paginator = " (page {0}/{1})".format(page + 1, int(math.ceil(results_count / 10)))
         else:
             paginator = ""
 
