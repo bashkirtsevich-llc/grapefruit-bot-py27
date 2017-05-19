@@ -61,7 +61,7 @@ def get_torrent_details(info_hash, page=0):
     result = json.loads(server_result)["result"]
     if result:
         if len(result["files"]) > 10:
-            paginator = " (page {0}/{1})".format(page + 1, len(result["files"]) / 10)
+            paginator = " (page {0}/{1})".format(page + 1, int(math.ceil(len(result["files"]) / 10)))
         else:
             paginator = ""
 
