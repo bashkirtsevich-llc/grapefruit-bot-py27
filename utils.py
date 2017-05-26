@@ -1,3 +1,7 @@
+from __future__ import division
+import math
+
+
 def str_escape(string):
     return "".join(
         x for x in string if x.isalpha() or x.isdigit() or x == " "
@@ -27,3 +31,10 @@ def sizeof_fmt(num, suffix="B"):
         num /= 1024.0
 
     return "%.1f %s%s" % (num, "Y", suffix)
+
+
+def paginator(page, results_count, page_size=10):
+    if results_count > page_size:
+        return " (page {0}/{1})".format(page + 1, int(math.ceil(results_count / page_size)))
+    else:
+        return ""

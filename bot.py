@@ -1,15 +1,13 @@
-from __future__ import division
 import json
 import urllib
 import urllib2
-import math
 
 from telebot import TeleBot
 from telebot.types import InlineKeyboardButton
 from telebot.types import InlineKeyboardMarkup
 from telebot.util import extract_command
 
-from utils import str_escape, is_info_hash, get_files_size, sizeof_fmt
+from utils import str_escape, is_info_hash, get_files_size, sizeof_fmt, paginator
 
 
 def search_torrents(query="latest", page=0):
@@ -29,11 +27,6 @@ def search_torrents(query="latest", page=0):
     results_count = api_response["count"]
 
     if results:
-        if results_count > 10:
-            paginator = " (page {0}/{1})".format(page + 1, int(math.ceil(results_count / 10)))
-        else:
-            paginator = ""
-
         return reduce(
             lambda r, e: r + "\xE2\x96\xAB `{name}`\r\n/{info_hash}\r\n\r\n".format(
                 name=e["name"].encode('utf-8').strip(),
@@ -41,7 +34,7 @@ def search_torrents(query="latest", page=0):
             results,
             "Search *results* by keywords \"_{query}_\"{paginator}:\r\n\r\n".format(
                 query=query,
-                paginator=paginator
+                paginator=paginator(page, results_count)
             )
         ), results_count
     else:
@@ -60,15 +53,9 @@ def get_torrent_details(info_hash, page=0):
     server_result = urllib2.urlopen(url).read()
     result = json.loads(server_result)["result"]
     if result:
-        if len(result["files"]) > 10:
-            paginator = " (page {0}/{1})".format(page + 1, int(math.ceil(len(result["files"]) / 10)))
-        else:
-            paginator = ""
-
         return reduce(
             lambda r, e: r + "`{path} ({size})`\r\n".format(
-                path=reduce(lambda p, f: p + ("/" if p else "") + f.encode('utf-8').strip(), e["path"],
-                            ""),
+                path=reduce(lambda p, f: p + ("/" if p else "") + f.encode('utf-8').strip(), e["path"], ""),
                 size=sizeof_fmt(e["length"])),
             result["files"][page * 10: page * 10 + 10],
             ("\xE2\x96\xAB *Torrent details*\r\n\r\n"
@@ -80,7 +67,7 @@ def get_torrent_details(info_hash, page=0):
                 info_hash=result["info_hash"],
                 torrent_name=result["name"].encode('utf-8').strip(),
                 torrent_size=get_files_size(result["files"]),
-                paginator=paginator
+                paginator=paginator(page, len(result["files"]))
             )
         ), len(result["files"])
     else:
