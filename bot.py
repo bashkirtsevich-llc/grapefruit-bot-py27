@@ -58,7 +58,7 @@ def get_torrent_details(info_hash, page=0):
                 path=reduce(lambda p, f: p + ("/" if p else "") + f.encode('utf-8').strip(), e["path"], ""),
                 size=sizeof_fmt(e["length"])),
             result["files"][page * 10: page * 10 + 10],
-            ("\xE2\x96\xAB *Torrent details*\r\n\r\n"
+            ("*Torrent* details\r\n\r\n"
              "\xE2\x96\xAB *Name*: `{torrent_name}`\r\n\r\n"
              "\xE2\x96\xAB *Size*: `{torrent_size}`\r\n\r\n"
              "\xE2\x96\xAB *Hash*: `{info_hash}`\r\n\r\n"
