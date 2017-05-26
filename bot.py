@@ -28,7 +28,7 @@ def search_torrents(query="latest", page=0):
 
     if results:
         if find_latest:
-            response_head = "Last {count} torrents{paginator}:\r\n\r\n".format(
+            response_head = "\xF0\x9F\x94\xA5 Last {count} torrents{paginator}:\r\n\r\n".format(
                 count=min(results_count, 100),
                 paginator=paginator(page, results_count))
         else:
@@ -67,7 +67,7 @@ def get_torrent_details(info_hash, page=0):
                 path=reduce(lambda p, f: p + ("/" if p else "") + f.encode('utf-8').strip(), e["path"], ""),
                 size=sizeof_fmt(e["length"])),
             result["files"][page * 10: page * 10 + 10],
-            ("\xE2\x84\xB9 *Torrent* details\r\n\r\n"
+            ("\xF0\x9F\x93\x96 *Torrent* details\r\n\r\n"
              "\xE2\x96\xAB *Name*: `{torrent_name}`\r\n\r\n"
              "\xE2\x96\xAB *Size*: `{torrent_size}`\r\n\r\n"
              "\xE2\x96\xAB *Hash*: `{info_hash}`\r\n\r\n"
