@@ -11,13 +11,13 @@ from utils import str_escape, is_info_hash, get_files_size, sizeof_fmt, paginato
 
 
 def search_torrents(query="latest", page=0):
-    if query == "latest":
-        url = "http://localhost:8081/api/latest?limit=10&offset={0}".format(
-            page * 10)
+    find_latest = query == "latest"
+
+    if find_latest:
+        url = "http://localhost:8081/api/latest?limit=10&offset={0}".format(page * 10)
     else:
         url = "http://localhost:8081/api/search?{0}&limit=10&offset={1}".format(
-            urllib.urlencode({"query": query}),
-            page * 10)
+            urllib.urlencode({"query": query}), page * 10)
 
     server_result = urllib2.urlopen(url).read()
 
@@ -27,23 +27,32 @@ def search_torrents(query="latest", page=0):
     results_count = api_response["count"]
 
     if results:
+        if find_latest:
+            response_head = "Last {count} torrents{paginator}:\r\n\r\n".format(
+                count=min(results_count, 100),
+                paginator=paginator(page, results_count))
+        else:
+            response_head = "\xF0\x9F\x94\x8D Search *results* by keywords \"_{query}_\"{paginator}:\r\n\r\n".format(
+                query=query,
+                paginator=paginator(page, results_count))
+
         return reduce(
             lambda r, e: r + "\xE2\x96\xAB `{name}`\r\n/{info_hash}\r\n\r\n".format(
                 name=e["name"].encode('utf-8').strip(),
                 info_hash=e["info_hash"]),
             results,
-            "Search *results* by keywords \"_{query}_\"{paginator}:\r\n\r\n".format(
-                query=query,
-                paginator=paginator(page, results_count)
-            )
+            response_head
         ), results_count
     else:
-        return ("Your search - *{0}* - did not match any documents.\r\n\r\n"
-                "Suggestions:\r\n"
-                "\xE2\x84\xB9 Make sure all words are spelled correctly.\r\n"
-                "\xE2\x84\xB9 Try different keywords.\r\n"
-                "\xE2\x84\xB9 Try more general keywords."
-                ).format(query), 0
+        if find_latest:
+            return "\xF0\x9F\x98\xB1 No results found."
+        else:
+            return ("\xF0\x9F\x94\x8D Your search - *{0}* - did not match any documents.\r\n\r\n"
+                    "Suggestions:\r\n"
+                    "\xE2\x84\xB9 Make sure all words are spelled correctly.\r\n"
+                    "\xE2\x84\xB9 Try different keywords.\r\n"
+                    "\xE2\x84\xB9 Try more general keywords."
+                    ).format(query), 0
 
 
 def get_torrent_details(info_hash, page=0):
@@ -58,7 +67,7 @@ def get_torrent_details(info_hash, page=0):
                 path=reduce(lambda p, f: p + ("/" if p else "") + f.encode('utf-8').strip(), e["path"], ""),
                 size=sizeof_fmt(e["length"])),
             result["files"][page * 10: page * 10 + 10],
-            ("*Torrent* details\r\n\r\n"
+            ("\xE2\x84\xB9 *Torrent* details\r\n\r\n"
              "\xE2\x96\xAB *Name*: `{torrent_name}`\r\n\r\n"
              "\xE2\x96\xAB *Size*: `{torrent_size}`\r\n\r\n"
              "\xE2\x96\xAB *Hash*: `{info_hash}`\r\n\r\n"
