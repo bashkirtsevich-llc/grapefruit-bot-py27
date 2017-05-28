@@ -25,11 +25,13 @@ def search_torrents(query="latest", page=0):
 
     results = api_response["result"]
     results_count = api_response["count"]
+    total_count = api_response["total_count"]
 
     if results:
         if find_latest:
-            response_head = "\xF0\x9F\x94\xA5 Last {count} torrents{paginator}:\r\n\r\n".format(
+            response_head = "\xF0\x9F\x94\xA5 Last {count} from {total_count} torrents{paginator}:\r\n\r\n".format(
                 count=min(results_count, 100),
+                total_count=total_count,
                 paginator=paginator(page, results_count))
         else:
             response_head = "\xF0\x9F\x94\x8D Search *results* by keywords \"_{query}_\"{paginator}:\r\n\r\n".format(
