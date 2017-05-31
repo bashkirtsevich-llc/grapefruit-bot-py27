@@ -237,3 +237,5 @@ def start_bot(bot_token):
             bot.polling(none_stop=True)
         except (KeyboardInterrupt, SystemExit):
             break
+        except:
+            pass
