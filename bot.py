@@ -25,7 +25,7 @@ def search_torrents(query="latest", page=0):
 
     results = api_response["result"]
     results_count = api_response["count"]
-    total_count = api_response["total_count"]
+    total_count = api_response.get("total_count", results_count)
 
     if results:
         if find_latest:
