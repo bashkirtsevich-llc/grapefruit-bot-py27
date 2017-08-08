@@ -124,28 +124,28 @@ def start_bot(bot_token):
                                                       is_info_hash(extract_command(message.text)))
             def handle_details(message):
                 info_hash = extract_command(message.text.lower()).encode('utf-8').strip()
-                # try:
-                response_text, files_count = get_torrent_details(info_hash)
+                try:
+                    response_text, files_count = get_torrent_details(info_hash)
 
-                if files_count > 10:
-                    btn_next_data = json.dumps({
-                        "m": "d",
-                        "a": info_hash,
-                        "p": 1  # Go to page #1
-                    }).replace(" ", "")
+                    if files_count > 10:
+                        btn_next_data = json.dumps({
+                            "m": "d",
+                            "a": info_hash,
+                            "p": 1  # Go to page #1
+                        }).replace(" ", "")
 
-                    keyboard = InlineKeyboardMarkup()
-                    keyboard.add(InlineKeyboardButton(text="Next page \xE2\x9E\xA1",
-                                                      callback_data=btn_next_data))
-                else:
-                    keyboard = None
+                        keyboard = InlineKeyboardMarkup()
+                        keyboard.add(InlineKeyboardButton(text="Next page \xE2\x9E\xA1",
+                                                          callback_data=btn_next_data))
+                    else:
+                        keyboard = None
 
-                bot.send_message(chat_id=message.chat.id,
-                                 parse_mode="Markdown",
-                                 text=response_text,
-                                 reply_markup=keyboard)
-                # except:
-                #     response_error(message.chat.id)
+                    bot.send_message(chat_id=message.chat.id,
+                                     parse_mode="Markdown",
+                                     text=response_text,
+                                     reply_markup=keyboard)
+                except:
+                    response_error(message.chat.id)
 
             @bot.message_handler(content_types=["text"])
             def handle_search(message):
